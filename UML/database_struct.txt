@@ -1,0 +1,43 @@
+User:
+- uid PK 123
+- utag
+- group ""
+- custom_permissions []
+- profile_name ""
+- profile_img ""
+- profile_descr ""
+- profile_ass ""
+- profile_email ""
+- profile_status ""
+- profile_subscribers []
+- last_seen TS 123
+- registration TS 123
+
+Punishment:
+- pid PK 123
+- uid 123
+- adid 123
+- reason ""
+- duration TS 123
+- data TS 123
+
+Category:
+- cid PK 123
+- name ""
+- description ""
+- creator 123
+- data 123
+
+Topic:
+- tid PK 123
+- name ""
+- description ""
+- body "" // somnitelnaya huyna;
+- creator 123
+- reactions 123
+- data 123
+- topic_subscribers []
+
+Comments:
+- cid PK 123
+- 
