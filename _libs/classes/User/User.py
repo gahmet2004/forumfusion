@@ -19,7 +19,7 @@ class User:
         self.group = group
         self.last_seen = last_seen
         self.registration = registration
-    def getId(self) -> int:
+    def getID(self) -> int:
         return self.id
     def getTag(self) -> str:
         return self.tag
