@@ -2,6 +2,7 @@ class Topic:
     def __init__(
             self,
             id : int,
+            subcat_id : int,
             author : int,
             name : str,
             preview : str,
@@ -13,6 +14,7 @@ class Topic:
             issued : int
     ):
         self.id = id
+        self.subcat_id = subcat_id
         self.author = author
         self.name = name
         self.preview = preview
@@ -24,6 +26,8 @@ class Topic:
         self.issued = issued
     def getID(self) -> int:
         return self.id
+    def getSubcatID(self) -> int:
+        return self.subcat_id
     def getAuthor(self) -> int:
         return self.author
     def getName(self) -> str:
@@ -42,6 +46,8 @@ class Topic:
         return self.last_edit
     def getIssued(self) -> int:
         return self.issued
+    def setSubcatID(self, id : int) -> None:
+        self.subcat_id = id
     def setName(self, name : str) -> None:
         self.name = name
     def setPreview(self, preview : str) -> None:

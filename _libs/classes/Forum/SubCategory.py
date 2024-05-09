@@ -1,7 +1,8 @@
 class SubCategory:
     def __init__(
             self,
-            id : int, 
+            id : int,
+            cat_id : int,
             name : str,
             descript : str,
             subscribers : list,
@@ -10,6 +11,7 @@ class SubCategory:
             issued : int
     ):
         self.id = id
+        self.cat_id = cat_id
         self.name = name
         self.descript = descript
         self.subscribers = subscribers
@@ -18,6 +20,8 @@ class SubCategory:
         self.issued = issued
     def getID(self) -> int:
         return self.id
+    def getCatID(self) -> int:
+        return self.cat_id
     def getName(self) -> str:
         return self.name
     def getDescript(self) -> str:
@@ -30,6 +34,8 @@ class SubCategory:
         return self.creator_id
     def getIssued(self) -> int:
         return self.issued
+    def setCatID(self, id : int) -> None:
+        self.cat_id = id
     def setName(self, name : str) -> None:
         self.name = name
     def setDescript(self, descript : str) -> None:
