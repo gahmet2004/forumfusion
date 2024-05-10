@@ -63,4 +63,8 @@ class Database:
         self.manager = DatabaseManager(db_name, logger)
         self.logger = logger
         self.logger.info(f"Instance of database started. Database {db_name}")
-    def getUserById() -> 
+        self.__initialize__()
+    def __initialize__(self):
+        from _libs.services._databaseRequests import _DEFAULT_INIT
+        self.manager.execute(_DEFAULT_INIT)
+        self.logger.info(f"Database attached successfully.")
