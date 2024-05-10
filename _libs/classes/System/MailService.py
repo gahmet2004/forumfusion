@@ -51,7 +51,7 @@ a = MailService(
     2525,
     "forum@gallahad.ru",
     "forum@gallahad.ru",
-    "Ivoves20$"
+    "BabayKa22443$$$$"
 )
 a.send_message(
     "HI MAAAAN! I am here to test SMTP lib.",
