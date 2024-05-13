@@ -50,3 +50,19 @@ class Settings:
         return self.password_salt
     def getVersion(self) -> str:
         return self.version
+
+def dict_to_Settings(data : dict) -> Settings:
+    return Settings(
+        data['terms'],
+        data['contacts'],
+        data['auth_enabled'],
+        data['service_mode'],
+        data['mail_host'],
+        data['mail_port'],
+        data['mail_from'],
+        data['mail_user'],
+        data['mail_pass'],
+        data['panel_pass'],
+        data['password_salt'],
+        data['version']
+    )
