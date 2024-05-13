@@ -15,7 +15,7 @@ json_service = Database.JsonManager("_data/settings.json")
 
 @engine.route('/')
 def root_manager():
-    return
+    return "Hello"
 
 if __name__ == '__main__':
     # ==============

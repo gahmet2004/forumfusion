@@ -2,6 +2,7 @@ import sqlite3
 import threading
 import logging
 import json
+import time
 
 import _libs.classes.User.User as User
 import _libs.classes.User.Profile as Profile
@@ -17,8 +18,6 @@ import _libs.classes.Forum.Topic as Topic
 
 import _libs.services._databaseRequests
 import _libs.services._dictSerializer
-
-from sqlite3.dbapi2 import _Parameters
 
 import os.path as Path
 
@@ -57,7 +56,7 @@ class DatabaseManager:
             self,
             request : str,
             type : str = 'run',
-            parameters: _Parameters = ()
+            parameters = ()
     ):
         """
         type : use 'run', 'script', 'one' or 'many', depending on what return you require.
@@ -66,10 +65,10 @@ class DatabaseManager:
         self.locker.acquire()
         try:
             if (type == "run"):
-                self.cursor.execute(request, parameters)
+                resultset = self.cursor.execute(request, parameters)
                 self.connection.commit()
             if (type == "script"):
-                self.cursor.executescript(request, parameters)
+                resultset = self.cursor.executescript(request)
                 self.connection.commit()
             if (type == "fetchone"):
                 self.cursor.execute(request, parameters)
@@ -155,19 +154,20 @@ class Database:
             group : str,
             last_seen : int,
             registration : int
-    ):
-        self.manager.execute(
+    ) -> User:
+        data = self.manager.execute(
             "INSERT INTO `users_user` (`tag`, `email`, `password`, `group`, `last_seen`, `registration`) VALUES (?, ?, ?, ?, ?, ?)",
             'run',
             (tag, email, password, group, last_seen, registration)
         )
+        return self.userGet(id = data.lastrowid)
     #
     #   USERS PART : PROFILE
     #
     def profileGet(
             self, 
             id : str = None
-        ) -> User:
+        ) -> Profile.Profile:
         response = self.manager.execute(
             "SELECT * FROM `users_profile` WHERE `id` = ?",
             'one',
@@ -181,23 +181,96 @@ class Database:
             _libs.services._dictSerializer.listIdDeserialize(str(response[5])),
             _libs.services._dictSerializer.listIdDeserialize(str(response[6]))
         )
-    def profileSet(self, id : int, var : str, val) -> None:
+    def profileSet(
+            self,
+            id : int, 
+            var : str, 
+            val
+        ) -> None:
         self.manager.execute(
             "UPDATE `users_profile` SET ? = ? WHERE `id` = ?",
             'run',
             (var, val, id)
         )
-    # def userAdd(
-    #         self,
-    #         id : int,
-    #         name : str,
-    #         avatar : str,
-    #         about : str,
-    #         subs : list,
-    #         followers : list
-    # ):
-    #     self.manager.execute(
-    #         "INSERT INTO `users_profile` (`id`, `email`, `password`, `group`, `last_seen`, `registration`) VALUES (?, ?, ?, ?, ?, ?)",
-    #         'run',
-    #         (tag, email, password, group, last_seen, registration)
-    #     )
+    def profileAdd(
+            self,
+            id : int,
+            name : str,
+            avatar : str,
+            about : str,
+            subs : list,
+            followers : list
+    ) -> Profile.Profile:
+        subs = _libs.services._dictSerializer.listIdSerialize(subs)
+        followers = _libs.services._dictSerializer.listIdSerialize(followers)
+        data = self.manager.execute(
+            "INSERT INTO `users_profile` (`id`, `name`, `avatar`, `about`, `subs`, `followers`) VALUES (?, ?, ?, ?, ?, ?)",
+            'run',
+            (id, name, avatar, about, subs, followers)
+        )
+        return self.userGet(id = data.lastrowid)
+    #
+    #   USERS PART : PUNISHMENT
+    #
+    def punishmentGet(
+            self,
+            id : int = None
+    ) -> Punishment.Punishment:
+        response = self.manager.execute(
+            "SELECT * FROM `users_punishment` WHERE `id` = ?",
+            'one',
+            (id,)
+        )
+        return Punishment.Punishment(
+            int(response[0]),
+            int(response[1]),
+            int(response[2]),
+            str(response[3]),
+            int(response[4]),
+            int(response[5])
+        )
+    def punishmentsOfUser(
+            self,
+            user_id : int,
+            activeRequired : bool = False
+    ) -> list:
+        request = "SELECT `id` FROM `users_punishment` WHERE `user_id` = ?"
+        args = list()
+        args.append(user_id)
+        if activeRequired:
+            request += " AND `duration` + `issued_at` < ?"
+            args.append(int(time.time()))
+        response = self.manager.execute(
+            request,
+            'many',
+            args
+        )
+        _return = list()
+        for ans in response:
+            _return.append(self.punishmentGet(ans[0]))
+        return
+    def punishmentsOfAdmin(
+            self,
+            admin_id : int
+    ) -> list:
+        return
+    def punishmentSet(
+            self,
+            id : int,
+            var : str,
+            val
+    ):
+        response = self.manager.execute(
+            "",
+            "many"
+        )
+        return
+    def punishmentAdd(
+            self,
+            user_id : int,
+            admin_id : int,
+            reason : str,
+            duration : int,
+            issued_at : int
+    ):
+        
