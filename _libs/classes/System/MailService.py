@@ -21,7 +21,7 @@ class MailService:
         self.user = m_user
         self.m_from = m_from
         self.m_pass = m_pass
-    def send_message(
+    def sendMessage(
             self,
             subject : str,
             to : str,
@@ -45,16 +45,3 @@ class MailService:
             body
         )
         server.quit()
-
-a = MailService(
-    "smtp.timeweb.ru",
-    2525,
-    "forum@gallahad.ru",
-    "forum@gallahad.ru",
-    "BabayKa22443$$$$"
-)
-a.send_message(
-    "HI MAAAAN! I am here to test SMTP lib.",
-    "sobol.zh@phystech.edu",
-    "Your Test Code is 111223123123123"
-)

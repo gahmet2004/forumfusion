@@ -1,9 +1,23 @@
 import bcrypt
 
-pwd = "BabayKA222$$$".encode()
-salt = bcrypt.gensalt()
-pwd2 = "BabayKA222$$$".encode()
-hashed = bcrypt.hashpw(pwd, salt)
-hashed2 = bcrypt.hashpw(pwd2, salt)
-print(hashed)
-print(hashed2)
+_ENCODING = "utf-8"
+
+def hashPassword(
+        pswd : str,
+        salt : str
+) -> str:
+    return bcrypt.hashpw(
+        pswd.encode(encoding=_ENCODING),
+        salt.encode(encoding=_ENCODING)
+    )
+
+def getSalt() -> str:
+    return bcrypt.gensalt().decode(encoding=_ENCODING)
+
+def isValid(
+        pswd : str,
+        salt : str,
+        hash : str
+) -> bool:
+    hashed = hashPassword(pswd, salt)
+    return (hash.__eq__(hashed))
