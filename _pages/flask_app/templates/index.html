@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя страница</title>
+    <!-- Подключение CSS-стилей -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px; /* Отступы слева и справа */
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 0; /* Увеличенные отступы сверху и снизу */
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav {
+            margin: 20px 0; /* Внешние отступы сверху и снизу */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li:last-child {
+            margin-right: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #666;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+        }
+
+        .user span {
+            margin-right: 10px;
+        }
+
+        .user img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .content {
+            padding: 20px 0; /* Отступы сверху и снизу */
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0; /* Отступы сверху и снизу */
+        }
+    </style>
+</head>
+<body>
+    <header class="container">
+        <div class="header-inner">
+            <div class="menu">
+                <nav>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/profile">Profile</a></li>
+                        <li><a href="/contacts">Contacts</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="user">
+                <span>{{ user.username }}</span>
+                <img src="{{ url_for('static', filename=user.avatar) }}" alt="User Avatar">
+            </div>
+        </div>
+    </header>
+    <!-- Основное содержимое страницы -->
+    <div class="content container">
+        <!-- Здесь будет контент страницы -->
+    </div>
+    <!-- Подвал страницы -->
+    <footer class="container">
+        <p>Мой футер</p>
+    </footer>
+</body>
+</html>
