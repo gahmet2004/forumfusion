@@ -6,7 +6,7 @@ app = Flask(__name__)
 def index():
     user = {
         'username': 'Иван Иванов',
-        'avatar': 'avatar/p.png'
+        'avatar': 'no-avatar.png'
     }
     return render_template('index.html', user=user)
 
