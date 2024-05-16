@@ -118,7 +118,7 @@ class Database:
             self, 
             id : str = None, 
             tag : str = None
-        ) -> User:
+        ) -> User.User:
         request = "SELECT * FROM `users_user` WHERE "
         if tag == None:
             request += "`id` = ?"
@@ -154,7 +154,7 @@ class Database:
             group : str,
             last_seen : int,
             registration : int
-    ) -> User:
+    ) -> User.User:
         data = self.manager.execute(
             "INSERT INTO `users_user` (`tag`, `email`, `password`, `group`, `last_seen`, `registration`) VALUES (?, ?, ?, ?, ?, ?)",
             'run',
@@ -187,7 +187,7 @@ class Database:
             var : str, 
             val
         ) -> None:
-        self.manager.execute(
+        return self.manager.execute(
             "UPDATE `users_profile` SET ? = ? WHERE `id` = ?",
             'run',
             (var, val, id)
@@ -203,15 +203,25 @@ class Database:
     ) -> Profile.Profile:
         subs = _libs.services._dictSerializer.listIdSerialize(subs)
         followers = _libs.services._dictSerializer.listIdSerialize(followers)
-        data = self.manager.execute(
+        self.manager.execute(
             "INSERT INTO `users_profile` (`id`, `name`, `avatar`, `about`, `subs`, `followers`) VALUES (?, ?, ?, ?, ?, ?)",
             'run',
             (id, name, avatar, about, subs, followers)
         )
-        return self.userGet(id = data.lastrowid)
+        return self.profileGet(id)
     #
     #   USERS PART : PUNISHMENT
     #
+    def punishmentIsExist(
+        self,
+        id : int
+    ) -> bool:
+        response = self.manager.execute(
+            "SELECT * FROM `users_punishment` WHERE `id` = ?",
+            'one',
+            (id,)
+        )
+        return len(response) != 0
     def punishmentGet(
             self,
             id : int = None
@@ -253,18 +263,26 @@ class Database:
             self,
             admin_id : int
     ) -> list:
-        return
-    def punishmentSet(
-            self,
-            id : int,
-            var : str,
-            val
-    ):
         response = self.manager.execute(
-            "",
-            "many"
+            "SELECT `id` FROM `users_punishment` WHERE `admin_id` = ?",
+            "many",
+            (admin_id,)
         )
-        return
+        _return = list()
+        for ans in response:
+            _return.append(self.punishmentGet(ans[0]))
+        return _return
+    def punishmentSet(
+        self,
+        id : int,
+        var : str,
+        val
+    ):
+        return self.manager.execute(
+            "UPDATE `users_punishment` SET ? = ? WHERE `id` = ?", 
+            "run", 
+            (var, val, id)
+        )
     def punishmentAdd(
             self,
             user_id : int,
@@ -272,5 +290,68 @@ class Database:
             reason : str,
             duration : int,
             issued_at : int
+    ) -> Punishment.Punishment:
+        data = self.manager.execute(
+            "INSERT INTO `users_punishment` (`user_id`, `admin_id`, `reason`, `duration`, `issued_at`) VALUES (?, ?, ?, ?, ?)",
+            'run',
+            (user_id, admin_id, reason, duration, issued_at)
+        )
+        return self.punishmentGet(data.lastrowid)
+    #
+    #   USERS PART : SETTINGS
+    #
+    def settingsGet(
+        self,
+        id : int
+    ) -> UserSettings.Settings:
+        response = self.manager.execute(
+            "SELECT * FROM `users_settings` WHERE `id` = ?",
+            'one',
+            (id,)
+        )
+        return UserSettings.Settings(
+            int(response[0]),
+            bool(response[1]),
+            bool(response[2]),
+            bool(response[3]),
+            bool(response[4]),
+            bool(response[5])
+        )
+    def settingsSetBool(
+        self,
+        id : int,
+        var : str,
+        val : bool
     ):
-        
+        return self.manager.execute(
+            "UPDATE `users_settings` SET ? = ? WHERE `id` = ?", 
+            "run", 
+            (var, int(val), id)
+        )
+    def settingsAdd(
+        self,
+        id : int,
+        email_new_topic_event : bool,
+        email_new_review_event : bool,
+        email_follower_event : bool,
+        email_broadcast : bool,
+        hide_email : bool
+    ):
+        args = (
+            id,
+            int(email_new_topic_event),
+            int(email_new_review_event),
+            int(email_follower_event),
+            int(email_broadcast),
+            int(hide_email)
+        )
+        self.manager.execute(
+            "INSERT INTO `users_settings` (`id`, `email_new_topic_event`, `email_new_review_event`, `email_follower_event`, `email_broadcast`, `hide_email`) VALUES (?, ?, ?, ?, ?, ?)",
+            'run',
+            args
+        )
+        return self.settingsGet(id)
+    #
+    #   FORUM PART : SETTINGS
+    #
+    
