@@ -12,6 +12,7 @@ logger = None
 database = None
 settings = None
 mail_service = None
+sessions = dict()
 json_service = Database.JsonManager("_data/settings.json")
 
 @engine.route('/')
