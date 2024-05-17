@@ -2,15 +2,17 @@ class Review:
     def __init__(
             self,
             id : int,
+            topic_id : int,
             author : int,
             content : str,
             banned : bool,
             ban_meta : dict,
-            reaction : str,
+            reaction : int,
             last_edit : int,
             issued : int
     ):
         self.id = id
+        self.topic_id = topic_id
         self.author = author
         self.content = content
         self.banned = banned
@@ -20,6 +22,8 @@ class Review:
         self.issued = issued
     def getID(self) -> int:
         return self.id
+    def getTopicID(self) -> int:
+        return self.topic_id
     def getAuthor(self) -> int:
         return self.author
     def isBanned(self) -> bool:
@@ -36,7 +40,7 @@ class Review:
         self.banned = banned
     def setBanMeta(self, meta : dict) -> None:
         self.ban_meta = meta
-    def setReaction(self, reaction : str) -> None:
+    def setReaction(self, reaction : int) -> None:
         self.reaction = reaction
     def setLastEdit(self, last_edit : int) -> None:
         self.last_edit = last_edit

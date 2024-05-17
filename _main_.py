@@ -1,4 +1,5 @@
 import logging
+import time
 
 import _libs.classes.System.Database as Database
 import _libs.classes.System.Settings as SysSettings
@@ -15,6 +16,8 @@ json_service = Database.JsonManager("_data/settings.json")
 
 @engine.route('/')
 def root_manager():
+    print(database.punishmentSet(2, 'reason', "dolb2"))
+    print(database.punishmentSet(2, 'duration', 100))
     return "Hello"
 
 if __name__ == '__main__':

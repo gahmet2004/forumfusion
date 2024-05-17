@@ -70,17 +70,18 @@ class DatabaseManager:
             if (type == "script"):
                 resultset = self.cursor.executescript(request)
                 self.connection.commit()
-            if (type == "fetchone"):
+            if (type == "one"):
                 self.cursor.execute(request, parameters)
                 resultset = self.cursor.fetchone()
             if (type == "many"):
                 self.cursor.execute(request, parameters)
-                resultset = self.cursor.fetchmany()
+                resultset = self.cursor.fetchall()
         except Exception as e:
-            self.logger.error(e)
+            print(e)
         finally:
             self.locker.release()
         return resultset
+
 class Database:
     def __init__(self, db_name : str, logger : logging.Logger):
         """
@@ -142,9 +143,9 @@ class Database:
         )
     def userSet(self, id : int, var : str, val) -> None:
         self.manager.execute(
-            "UPDATE `users_user` SET ? = ? WHERE `id` = ?",
+            f"UPDATE `users_user` SET {var} = ? WHERE `id` = ?",
             'run',
-            (var, val, id)
+            (val, id)
         )
     def userAdd(
             self,
@@ -188,9 +189,9 @@ class Database:
             val
         ) -> None:
         return self.manager.execute(
-            "UPDATE `users_profile` SET ? = ? WHERE `id` = ?",
+            f"UPDATE `users_profile` SET {var} = ? WHERE `id` = ?",
             'run',
-            (var, val, id)
+            (val, id)
         )
     def profileAdd(
             self,
@@ -248,7 +249,7 @@ class Database:
         args = list()
         args.append(user_id)
         if activeRequired:
-            request += " AND `duration` + `issued_at` < ?"
+            request += " AND `duration` + `issued_at` > ?"
             args.append(int(time.time()))
         response = self.manager.execute(
             request,
@@ -258,7 +259,7 @@ class Database:
         _return = list()
         for ans in response:
             _return.append(self.punishmentGet(ans[0]))
-        return
+        return _return
     def punishmentsOfAdmin(
             self,
             admin_id : int
@@ -279,9 +280,9 @@ class Database:
         val
     ):
         return self.manager.execute(
-            "UPDATE `users_punishment` SET ? = ? WHERE `id` = ?", 
+            f"UPDATE `users_punishment` SET {var} = ? WHERE `id` = ?", 
             "run", 
-            (var, val, id)
+            (val, id)
         )
     def punishmentAdd(
             self,
@@ -324,9 +325,9 @@ class Database:
         val : bool
     ):
         return self.manager.execute(
-            "UPDATE `users_settings` SET ? = ? WHERE `id` = ?", 
+            f"UPDATE `users_settings` SET {var} = ? WHERE `id` = ?", 
             "run", 
-            (var, int(val), id)
+            (int(val), id)
         )
     def settingsAdd(
         self,
@@ -352,6 +353,294 @@ class Database:
         )
         return self.settingsGet(id)
     #
-    #   FORUM PART : SETTINGS
+    #   FORUM PART : TOPIC
     #
+    def topicGet(
+        self,
+        id : int
+    ) -> Topic.Topic:
+        response = self.manager.execute(
+            "SELECT * FROM `forum_topic` WHERE `id` = ?",
+            'one',
+            (id,)
+        )
+        return Topic.Topic(
+            int(response[0]),
+            int(response[1]),
+            int(response[2]),
+            str(response[3]),
+            str(response[4]),
+            str(response[5]),
+            _libs.services._dictSerializer.listIdDeserialize(str(response[6])),
+            bool(response[7]),
+            _libs.services._dictSerializer.deserialize(str(response[8])),
+            int(response[9]),
+            int(response[10])
+        )
+    def topicAdd(
+        self,
+        subcat_id : int,
+        author : int,
+        name : str,
+        preview : str,
+        content : str,
+        subscribers : list,
+        banned : bool,
+        ban_meta : dict,
+        last_edit : int,
+        issued : int
+    ):
+        args = (
+            subcat_id,
+            author,
+            name,
+            preview,
+            content,
+            _libs.services._dictSerializer.listIdSerialize(subscribers),
+            int(banned),
+            _libs.services._dictSerializer.serialize(ban_meta),
+            last_edit,
+            issued
+        )
+        data = self.manager.execute(
+            "INSERT INTO `forum_topic` (`subcat_id`, `author`, `name`, `preview`, `content`, `subscribers`, `banned`, `ban_meta`, `last_edit`, `issued`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            'run',
+            args
+        )
+        return self.topicGet(data.lastrowid)
+    def topicSet(
+        self,
+        id : int,
+        var : str,
+        val
+    ):
+        self.manager.execute(
+            f"UPDATE `forum_topic` SET {var} = ? WHERE `id` = ?",
+            'run',
+            (val, id)
+        )
+    def topicGetBySubcat(
+        self,
+        subcat_id : int
+    ) -> list:
+        data = self.manager.execute(
+            "SELECT `id` FROM `forum_topic` WHERE `subcat_id` = ?",
+            "many",
+            (subcat_id,)
+        )
+        _return = list()
+        for ans in data:
+            _return.append(self.topicGet(ans[0]))
+        return _return
+    #
+    #   FORUM PART : SUBCAT
+    #
+    def subcatGet(
+        self,
+        id : int
+    ) -> SubCategory.SubCategory:
+        response = self.manager.execute(
+            "SELECT * FROM `forum_subcategory` WHERE `id` = ?",
+            'one',
+            (id,)
+        )
+        return SubCategory.SubCategory(
+            int(response[0]),
+            int(response[1]),
+            str(response[2]),
+            str(response[3]),
+            _libs.services._dictSerializer.listIdDeserialize(str(response[4])),
+            _libs.services._dictSerializer.listIdDeserialize(str(response[5])),
+            int(response[6]),
+            int(response[7])
+        )
+    def subcatAdd(
+        self,
+        cat_id : int,
+        name : str,
+        descript : str,
+        subscribers : list,
+        moderators : list,
+        creator_id : int,
+        issued : int
+    ):
+        args = (
+            cat_id,
+            name,
+            descript,
+            _libs.services._dictSerializer.listIdSerialize(subscribers),
+            _libs.services._dictSerializer.listIdSerialize(moderators),
+            creator_id,
+            issued
+        )
+        data = self.manager.execute(
+            "INSERT INTO `forum_subcategory` (`cat_id`, `name`, `descript`, `subscribers`, `moderators`, `creator_id`, `issued`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            'run',
+            args
+        )
+        return self.subcatGet(data.lastrowid)
+    def subcatSet(
+        self,
+        id : int,
+        var : str,
+        val
+    ):
+        self.manager.execute(
+            f"UPDATE `forum_subcategory` SET {var} = ? WHERE `id` = ?",
+            'run',
+            (val, id)
+        )
+    def subcatGetByCat(
+        self,
+        cat_id : int
+    ) -> list:
+        data = self.manager.execute(
+            "SELECT `id` FROM `forum_subcategory` WHERE `cat_id` = ?",
+            "many",
+            (cat_id,)
+        )
+        _return = list()
+        for ans in data:
+            _return.append(self.subcatGet(ans[0]))
+        return _return
+    #
+    #   FORUM PART : CAT
+    #
+    def catGet(
+        self,
+        id : int
+    ) -> Category.Catergory:
+        response = self.manager.execute(
+            "SELECT * FROM `forum_category` WHERE `id` = ?",
+            'one',
+            (id,)
+        )
+        return Category.Catergory(
+            int(response[0]),
+            str(response[1]),
+            str(response[2]),
+            _libs.services._dictSerializer.listIdDeserialize(str(response[3])),
+            _libs.services._dictSerializer.listIdDeserialize(str(response[4])),
+            int(response[5]),
+            int(response[6])
+        )
+    def catAdd(
+        self,
+        name : str,
+        descript : str,
+        subscribers : list,
+        moderators : list,
+        creator_id : int,
+        issued : int
+    ):
+        args = (
+            name,
+            descript,
+            _libs.services._dictSerializer.listIdSerialize(subscribers),
+            _libs.services._dictSerializer.listIdSerialize(moderators),
+            creator_id,
+            issued
+        )
+        data = self.manager.execute(
+            "INSERT INTO `forum_category` (`name`, `descript`, `subscribers`, `moderators`, `creator_id`, `issued`) VALUES (?, ?, ?, ?, ?, ?)",
+            'run',
+            args
+        )
+        return self.subcatGet(data.lastrowid)
+    def catSet(
+        self,
+        id : int,
+        var : str,
+        val
+    ):
+        self.manager.execute(
+            f"UPDATE `forum_category` SET {var} = ? WHERE `id` = ?",
+            'run',
+            (val, id)
+        )
+    def catGetAll(
+        self
+    ) -> list:
+        data = self.manager.execute(
+            "SELECT `id` FROM `forum_category`",
+            "many"
+        )
+        _return = list()
+        for ans in data:
+            _return.append(self.catGet(ans[0]))
+        return _return
+    #
+    #   FORUM PART : REVIEW
+    #
+    def reviewGet(
+        self,
+        id : int
+    ) -> Review.Review:
+        response = self.manager.execute(
+            "SELECT * FROM `forum_review` WHERE `id` = ?",
+            'one',
+            (id,)
+        )
+        return Review.Review(
+            int(response[0]),
+            int(response[1]),
+            int(response[2]),
+            str(response[3]),
+            bool(int((response[4]))),
+            _libs.services._dictSerializer.deserialize(str(response[5])),
+            int(response[6]),
+            int(response[7]),
+            int(response[8])                        
+        )
+    def reviewAdd(
+        self,
+        topic_id : int,
+        author : int,
+        content : str,
+        banned : bool,
+        ban_meta : dict,
+        reaction : int,
+        last_edit : int,
+        issued : int
+    ):
+        args = (
+            topic_id,
+            author,
+            content,
+            int(banned),
+            _libs.services._dictSerializer.serialize(ban_meta),
+            reaction,
+            last_edit,
+            issued
+        )
+        data = self.manager.execute(
+            "INSERT INTO `forum_review` (`topic_id`, `author`, `content`, `banned`, `ban_meta`, `reaction`, `last_edit`, `issued`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            'run',
+            args
+        )
+        return self.reviewGet(data.lastrowid)
+    def catSet(
+        self,
+        id : int,
+        var : str,
+        val
+    ):
+        self.manager.execute(
+            f"UPDATE `forum_review` SET {var} = ? WHERE `id` = ?",
+            'run',
+            (val, id)
+        )
+    def reviewGetByTopic(
+        self,
+        topic_id : int
+    ) -> list:
+        data = self.manager.execute(
+            "SELECT `id` FROM `forum_review` WHERE `topic_id` = ? AND `banned` = 0",
+            "many",
+            (topic_id,)
+        )
+        _return = list()
+        for ans in data:
+            _return.append(self.reviewGet(ans[0]))
+        return _return
     
