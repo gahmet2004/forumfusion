@@ -9,7 +9,7 @@ def index():
         'avatar': 'no-avatar.png',
         'style': 'style.css'
     }
-    return render_template('index.html', user=user)
+    return render_template('forum.html', user=user)
 
 @app.route('/profile')
 def profile():
