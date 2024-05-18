@@ -9,7 +9,6 @@ import _libs.classes.System.Settings as SysSettings
 import _libs.classes.System.MailService as MailService
 
 import _libs.services._passwordManager as PasswordManager
-import _libs.services._dictSerializer as DataSerializer
 import _libs.services._mailTemplates as MailTemplates
 
 from waitress import serve
@@ -466,6 +465,6 @@ if __name__ == '__main__':
     # ===================
     serve(
         engine,
-        host = "localhost",
-        port = 8080,
+        host = "0.0.0.0",
+        port = 80
     )
