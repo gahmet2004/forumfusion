@@ -12,6 +12,7 @@ import _libs.services._passwordManager as PasswordManager
 import _libs.services._dictSerializer as DataSerializer
 import _libs.services._mailTemplates as MailTemplates
 
+from waitress import serve
 from datetime import timedelta
 from datetime import datetime
 from flask import Flask
@@ -463,8 +464,8 @@ if __name__ == '__main__':
     # ===================
     # === SERVER INIT ===
     # ===================
-    engine.run(
+    serve(
+        engine,
         host = "localhost",
         port = 8080,
-        debug = True
     )
