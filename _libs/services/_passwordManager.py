@@ -9,7 +9,7 @@ def hashPassword(
     return bcrypt.hashpw(
         pswd.encode(encoding=_ENCODING),
         salt.encode(encoding=_ENCODING)
-    )
+    ).decode(encoding=_ENCODING)
 
 def getSalt() -> str:
     return bcrypt.gensalt().decode(encoding=_ENCODING)

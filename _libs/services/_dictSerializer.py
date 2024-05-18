@@ -17,6 +17,8 @@ def deserialize(s : str) -> dict:
 def listIdSerialize(data : list) -> str:
     return ','.join(data)
 def listIdDeserialize(data : str) -> list:
+    if "," not in data:
+        return list()
     data = data.split(',')
     for node in data:
         node = int(node)
