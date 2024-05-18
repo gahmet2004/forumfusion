@@ -1,0 +1,36 @@
+{% extends "forum.html" %}
+
+{% block title %} {{ subcat.getName() }} {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ subcat.getName() }}</h2>
+
+    {% if user.getGroup() == "user" %}
+    <div class="add-topic">
+        <form action="/add/{{ subcat.getID() }}/form" method="post">
+            <button type="submit">Добавить</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <table class="topic-table">
+        <thead>
+            <tr>
+                <th>Название топика</th>
+                <th>Автор</th>
+                <th>Дата создания</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for topic in topics %}
+            <tr>
+                <td class="topic-title"><a href="/t/{{ topic.getID() }}">{{ topic.getName() }}</a></td>
+                <td><a style="text-decoration: none; color:blue" href="/profile/tag/{{ creators[topic.getID()] }}">{{ creators[topic.getID()] }}</a></td>
+                <td>{{ topic.getIssued()|rutime }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
