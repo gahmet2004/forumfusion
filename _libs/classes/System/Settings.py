@@ -66,3 +66,19 @@ def dict_to_Settings(data : dict) -> Settings:
         data['password_salt'],
         data['version']
     )
+def settings_to_dict(data : Settings) -> dict:
+    response = {
+        "terms" : data.getTerms(),
+        "contacts" : data.getContacts(),
+        "auth_enabled" : data.isAuthEnabled(),
+        "service_mode" : data.isServiceMode(),
+        "mail_host" : data.getMailHost(),
+        "mail_port" : data.getMailPort(),
+        "mail_from" : data.getMailFrom(),
+        "mail_user" : data.getMailUser(),
+        "mail_pass" : data.getMailPass(),
+        "panel_pass" : data.getPanelPass(),
+        "password_salt" : data.getPasswordSalt(),
+        "version" : data.getVersion()
+    }
+    return response

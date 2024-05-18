@@ -26,6 +26,8 @@ class Review:
         return self.topic_id
     def getAuthor(self) -> int:
         return self.author
+    def getContent(self) -> str:
+        return self.content
     def isBanned(self) -> bool:
         return self.banned
     def getBanMeta(self) -> dict:

@@ -25,6 +25,10 @@ class User:
         return self.tag
     def getEmail(self) -> str:
         return self.email
+    def getPassword(self) -> str:
+        return self.password
+    def getGroup(self) -> str:
+        return self.group
     def getLastSeen(self) -> int:
         return self.last_seen
     def getRegistration(self) -> int:

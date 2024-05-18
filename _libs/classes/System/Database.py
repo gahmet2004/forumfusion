@@ -97,6 +97,16 @@ class Database:
     #
     #   USERS PART : USER
     #
+    def userEmailUsed(
+            self,
+            mail : str
+        ) -> bool:
+        response = self.manager.execute(
+            "SELECT * FROM `users_user` WHERE `email` = ?",
+            'one',
+            (mail,)
+        )
+        return response != None
     def userIsExist(
             self, 
             id : str = None, 
@@ -114,7 +124,7 @@ class Database:
             'one',
             params
         )
-        return response is None            
+        return response != None
     def userGet(
             self, 
             id : str = None, 
@@ -178,9 +188,9 @@ class Database:
             int(response[0]),
             str(response[1]),
             str(response[2]),
-            str(response[4]),
-            _libs.services._dictSerializer.listIdDeserialize(str(response[5])),
-            _libs.services._dictSerializer.listIdDeserialize(str(response[6]))
+            str(response[3]),
+            _libs.services._dictSerializer.listIdDeserialize(str(response[4])),
+            _libs.services._dictSerializer.listIdDeserialize(str(response[5]))
         )
     def profileSet(
             self,
@@ -424,7 +434,7 @@ class Database:
         subcat_id : int
     ) -> list:
         data = self.manager.execute(
-            "SELECT `id` FROM `forum_topic` WHERE `subcat_id` = ?",
+            "SELECT `id` FROM `forum_topic` WHERE `subcat_id` = ? ORDER BY `id` DESC",
             "many",
             (subcat_id,)
         )

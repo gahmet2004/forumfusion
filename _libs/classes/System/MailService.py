@@ -1,4 +1,6 @@
 from smtplib import SMTP as smtp
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 class MailService:
     def __init__(
@@ -32,16 +34,14 @@ class MailService:
             self.user,
             self.m_pass
         )
-        body = "\r\n".join((
-            "From: %s" % self.m_from,
-            "To: %s" % to,
-            "Subject: %s" % subject,
-            "",
-            message
-        ))
+        msg = MIMEMultipart()
+        msg["Subject"] = subject
+        msg["From"] = self.m_from
+        msg["To"] = to
+        msg.attach(MIMEText(message))
         server.sendmail(
             self.m_from,
             to,
-            body
+            msg.as_string()
         )
         server.quit()
