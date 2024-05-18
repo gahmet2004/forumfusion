@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ForumFusion{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        li a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        li a:hover {
+            background-color: #e0e0e0;
+        }
+        .category {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .subcategory {
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header class="container">
+        <div class="header-inner">
+            <div class="menu">
+                <nav>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/profile">Profile</a></li>
+                        <li><a href="/contacts">Contacts</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="user">
+                <span>{{ profile.getName() }}</span>
+                <img src="{{ url_for('static', filename=profile.getAvatar()) }}">
+            </div>
+        </div>
+    </header>
+
+    <div class="content container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="container">
+        {% for cat in catlist %}
+        <div class="category">
+            <h2>{{ cat.getName() }}</h2>
+            <ul>
+                {% for subcat in subcatdict[cat.getID()] %}
+                <li class="subcategory"><a title="{{ subcat.getDescript() }}" href="/f/{{ subcat.getID() }}">{{ subcat.getName() }}</a></li>
+                {% endfor %}    
+            </ul>
+        </div>
+        {% endfor %}
+        <p>Copyright : ForumFusion | <a href="/terms" style="text-decoration: none; color: blue">Terms</a></p>
+    </footer>
+</body>
+</html>

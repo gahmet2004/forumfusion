@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ topic.getName() }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            margin-top: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tags {
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .tags span {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+        .content {
+            margin-bottom: 40px;
+        }
+        .comment-section {
+            margin-top: 40px;
+        }
+        .comment {
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .comment h4 {
+            margin: 0 0 5px 0;
+        }
+        .comment p {
+            margin: 0;
+        }
+        .form-group {
+            margin: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+            height: 100px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #topic-content {
+            border-top: 1px solid #ccc;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+    </style>
+    <!-- Подключаем библиотеки Showdown и MathJax -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: left;">Тема: {{ topic.getName() }}</h2>
+        <h3>Автор: <a style="text-align: left; text-decoration: none; color:blue" href="/profile/tag/{{ author.getTag() }}">{{ author.getTag() }}</a></h3>
+        <h3><a style="text-align: left; text-decoration: none; color:blue" href="/f/{{ topic.getSubcatID() }}">Вернуться к темам</a></h3>
+        <div id="topic-content" class="content">{{ topic.getContent() }}</div>
+        <div class="comment-section">
+            <h3>Комментарии</h3>
+            {% if comments|length == 0 %}
+                <i>Пока комментариев нет. Будьте первыми, кто оставит комментарий!</i>
+            {% endif %}
+            {% for comment in comments %}
+                <div class="comment">
+                    <h4><a href="/profile/tag/{{ commentor[comment.getID()] }}" style="text-decoration: none;color:blue">{{ commentor[comment.getID()] }}</a></h4>
+                    <p>{{ comment.getContent() }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="comment-form">
+            <h3>Добавить комментарий</h3>
+            <form action="/t/add_comment/{{ topic.getID() }}" method="post">
+                <div class="form-group">
+                    <label for="comment-content">Напишите комментарий</label>
+                    <textarea id="comment-content" name="comment-content" required></textarea>
+                </div>
+                <button type="submit">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var content = document.getElementById('topic-content').textContent;
+            var converter = new showdown.Converter();
+            var html = converter.makeHtml(content);
+            document.getElementById('topic-content').innerHTML = html;
+            MathJax.typesetPromise();
+        });
+    </script>
+</body>
+</html>

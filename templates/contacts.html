@@ -1,0 +1,15 @@
+{% extends "forum.html" %}
+
+{% block title %}Контакты{% endblock %}
+
+{% block content %}
+<div class="container contacts">
+    <h2 class="contact-heading">Наши контакты</h2>
+    <div class="contact">
+        <h3 class="contact-name">{{ user.username }}</h3>
+        <p class="contact-info">Email: {{ user.email }}</p>
+        <p class="contact-info">Телефон: {{ user.phone }}</p>
+        <p class="contact-info">Tg: {{ user.tg }}</p>
+    </div>
+</div>
+{% endblock %}
