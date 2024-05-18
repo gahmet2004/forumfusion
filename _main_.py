@@ -319,7 +319,7 @@ def auth_session(type : str):
             settings.getPasswordSalt(),
             target_user.getPassword()
         ):
-            return "Пароль неверн."
+            return "Пароль неверен."
         flask.session["token"] = secrets.token_hex(64)
         sessions[flask.session["token"]] = target_user.getID()
         database.userSet(
@@ -362,8 +362,6 @@ def auth_session(type : str):
             new_invite_hash
         )
         genlink = str("http://" + urlparse(flask.request.base_url).hostname + f"/auth/approve/{new_email}/{new_invite_hash}")
-        print(MailTemplates._SUBJECT_AUTH.replace("/username/", new_username))
-        print(MailTemplates._BODY_AUTH.replace("/link/", genlink))
         mail_service.sendMessage(
             MailTemplates._SUBJECT_AUTH.replace("/username/", new_username),
             new_email,
