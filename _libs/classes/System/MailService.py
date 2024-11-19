@@ -1,4 +1,6 @@
 from smtplib import SMTP as smtp
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 class MailService:
     def __init__(
@@ -21,7 +23,7 @@ class MailService:
         self.user = m_user
         self.m_from = m_from
         self.m_pass = m_pass
-    def send_message(
+    def sendMessage(
             self,
             subject : str,
             to : str,
@@ -32,29 +34,14 @@ class MailService:
             self.user,
             self.m_pass
         )
-        body = "\r\n".join((
-            "From: %s" % self.m_from,
-            "To: %s" % to,
-            "Subject: %s" % subject,
-            "",
-            message
-        ))
+        msg = MIMEMultipart()
+        msg["Subject"] = subject
+        msg["From"] = self.m_from
+        msg["To"] = to
+        msg.attach(MIMEText(message))
         server.sendmail(
             self.m_from,
             to,
-            body
+            msg.as_string()
         )
         server.quit()
-
-a = MailService(
-    "smtp.timeweb.ru",
-    2525,
-    "forum@gallahad.ru",
-    "forum@gallahad.ru",
-    "BabayKa22443$$$$"
-)
-a.send_message(
-    "HI MAAAAN! I am here to test SMTP lib.",
-    "sobol.zh@phystech.edu",
-    "Your Test Code is 111223123123123"
-)

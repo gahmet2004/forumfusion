@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новый топик для {{ subcat.getName() }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        textarea {
+            resize: vertical;
+            height: 150px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .file-input-wrapper input[type="file"] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-input-wrapper .btn-attach {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+        }
+        .file-input-wrapper .btn-attach:hover {
+            background-color: #e0e0e0;
+        }
+        #preview {
+            border-top: 1px solid #ccc;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+    </style>
+    <!-- Подключаем библиотеки Showdown и MathJax -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Создание топика</h2>
+        <form action="/add/{{ subcat.getID() }}/request" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Название</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Содержание (Поддержка <b>MarkDown</b>)</label>
+                <textarea id="content" name="content" oninput="updatePreview()" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Прикрепить файлы (в разработке)</label>
+                <div class="file-input-wrapper">
+                    <button disabled ="button" class="btn-attach">📎 Прикрепить файлы</button>
+                    <input disabled type="file" name="attachments" multiple>
+                </div>
+            </div>
+            <button type="submit">Создать топик</button>
+        </form>
+        <div id="preview"></div>
+    </div>
+    <script>
+        function updatePreview() {
+            var content = document.getElementById('content').value;
+            var converter = new showdown.Converter();
+            var html = converter.makeHtml(content);
+            document.getElementById('preview').innerHTML = html;
+            MathJax.typesetPromise();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends "forum.html" %}
+
+{% block title %}{{ other_profile.getName() }}{% endblock %}
+
+{% block content %}
+<div class="container profile-info">
+    <div>
+        <h2>{{ other_profile.getName() }}</h2>
+        <p>Подписчики: {{ other_profile.getFollowers()|length }}</p>
+        <p>Подписки: {{ other_profile.getSubs()|length }}</p>
+        {% if not user_sets.isHideEmail() %} <p>Почта: {{ other.getEmail() }}</p> {% endif %}
+    </div>
+    <div class="avatar-section">
+        <img src="{{ url_for('static', filename=profile.getAvatar()) }}" alt="Avatar">
+    </div>
+</div>
+{% endblock %}

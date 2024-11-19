@@ -10,6 +10,10 @@
 *.userosscache
 *.sln.docstates
 
+# Private Files
+_data/forum.sql
+_data/settings.json
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
