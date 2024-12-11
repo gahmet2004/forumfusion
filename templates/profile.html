@@ -1,0 +1,59 @@
+{% extends "forum.html" %}
+
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<div class="container profile-info">
+    <div>
+        <h2>{{ profile.getName() }}</h2>
+        <p>Подписчики: {{ profile.getFollowers()|length }}</p>
+        <p>Подписки: {{ profile.getSubs()|length }}</p>
+        {% if not user_sets.isHideEmail() %} <p>Почта: {{ user.getEmail() }}</p> {% endif %}
+    </div>
+    <div class="avatar-section">
+        <img src="{{ url_for('static', filename=profile.getAvatar()) }}" alt="Avatar">
+        <br>
+        <a class="upload-button" href="/logout">Выйти</a>
+    </div>
+</div>
+
+<div class="container settings">
+    <h3>Расширенные настройки</h3>
+    <form action="/profile/update/p" method="post">
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" value="{{ profile.getName() }}">
+
+        <label for="usertag">Тег:</label>
+        <input type="text" id="usertag" name="usertag" value="{{ user.getTag() }}">
+        
+        <label for="email">Электронная почта:</label>
+        <input type="email" id="email" name="email" value="{{ user.getEmail() }}" disabled>
+        
+        <label for="current-password">Текущий пароль:</label>
+        <input type="password" id="current-password" name="current-password">
+        
+        <label for="new-password">Новый пароль:</label>
+        <input type="password" id="new-password" name="new-password">
+        
+        <label for="new-avatar">
+            Новый аватар (256x256):
+            <p style="font-size: 11px;">Функция будет добавлена позже</p>
+        </label>
+        <input type="file" disabled id="new-avatar" name="new-avatar">
+        
+        <br>
+        <input class="upload-button" type="submit" value="Сохранить изменения">
+    </form>
+</div>
+
+<div class="container privacy-settings">
+    <form action="/profile/update/s" method="post">
+        <h3>Настройки приватности</h3>
+        <label>
+            <input type="checkbox" id="hide-email" name="hide-email" {% if user_sets.isHideEmail() %} checked {% endif %}> Скрывать почту
+        </label>
+        <br>
+        <input class="upload-button" type="submit" value="Сохранить изменения">
+    </form>
+</div>
+{% endblock %}

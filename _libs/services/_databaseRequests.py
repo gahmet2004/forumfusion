@@ -29,3 +29,18 @@ CREATE TABLE IF NOT EXISTS users_user (id INTEGER PRIMARY KEY AUTOINCREMENT, tag
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
 """
+
+_DEFAULT_JSON_SETTINGS = {
+    "terms" : "The terms were not currently set up. Please, contact administrator to set the terms of use.",
+    "contacts": "Contacts were not currently set up. Please, contact administrator to set the contacts.",
+    "auth_enabled": True,
+    "service_mode": False,
+    "mail_host": "smtp.example.com",
+    "mail_port": 444,
+    "mail_from": "mymail@example.com",
+    "mail_user": "mymail@example.com",
+    "mail_pass": "examplePassword",
+    "panel_pass": "notsetup",
+    "password_salt": "notsetup",
+    "version": "1.0.0"
+}

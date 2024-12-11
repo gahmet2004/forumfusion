@@ -37,6 +37,7 @@
 
         input[type="text"],
         input[type="email"],
+        input[type="number"],
         input[type="password"] {
             width: 100%;
             padding: 8px;
@@ -64,18 +65,35 @@
 <body>
     <div class="container">
         <h1>ForumFusion :: Welcome!</h1>
-        <form action="install.php" method="post">
-            <label for="usertag">Your user tag:</label>
+        <form action="install_complete" method="post">
+            <label for="usertag">User : Tag</label>
             <input type="text" id="usertag" name="usertag" value="admin" placeholder="Tag" required>
 
-            <label for="username">Your name:</label>
+            <label for="username">User : Name</label>
             <input type="text" id="username" name="username" value="Administrator" placeholder="Name" required>
 
-            <label for="email">Email:</label>
+            <label for="email">User : Email</label>
             <input type="email" id="email" name="email" placeholder="E-mail" required>
 
-            <label for="password">Password:</label>
+            <label for="password">User : Password</label>
             <input type="password" id="password" name="password" minlength="8" placeholder="Password" required>
+
+            <label for="smtp_server">System : SMTP server</label>
+            <input type="text" id="smtp_server" name="smtp_server" placeholder="smtp.mipt.ru" required>
+
+            <label for="smtp_port">System : SMTP port (use no-SSL)</label>
+            <input type="number" min = 1 max = 65535 id="smtp_port" name="smtp_port" placeholder="444" required>
+
+            <label for="smtp_user">System : SMTP Adress and Username</label>
+            <input type="email" id="smtp_user" name="smtp_user" placeholder="edu@mipt.ru" required>
+
+            <label for="smtp_pass">System : SMTP password</label>
+            <input type="password" id="smtp_pass" name="smtp_pass" placeholder="SMTP password" required>
+
+            <label for="panel_pass">System : Admin Panel Password</label>
+            <input type="password" id="panel_pass" name="panel_pass" placeholder="Panel password" required>
+
+            <label>If you didn't recieve mail after installation, check the SMTP settings!</label>
 
             <input type="submit" value="Finish the installation">
         </form>
